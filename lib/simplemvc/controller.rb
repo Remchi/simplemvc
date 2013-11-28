@@ -40,5 +40,19 @@ module Simplemvc
     def controller_name
       self.class.to_s.gsub(/Controller$/, "").to_snake_case
     end
+
+    def dispatch(action)
+      content = self.send(action)
+      if get_response
+        get_response
+      else
+        render(action)
+        get_response
+      end
+    end
+
+    def self.action(action_name)
+      -> (env) { self.new(env).dispatch(action_name) }
+    end
   end
 end
